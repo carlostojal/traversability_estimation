@@ -107,6 +107,7 @@ class CloudSegmentor:
         self.max_age = rospy.get_param('~max_age', 0.5)
 
         self.segm_cloud_pub = rospy.Publisher(rospy.get_param('~cloud_out', 'cloud_out'), PointCloud2, queue_size=1)
+        self.segm_cloud_pub_filtered = rospy.Publisher(rospy.get_param('~cloud_out_filtered', 'cloud_out_filtered'), PointCloud2, queue_size=1)
         self.resized_cloud_pub = rospy.Publisher('~resized_cloud', PointCloud2, queue_size=1)
         self.depth_pub = rospy.Publisher('~depth', Image, queue_size=1)
 
@@ -223,6 +224,16 @@ class CloudSegmentor:
         rospy.logdebug('Output cloud shape: %s', output.shape)
         return np.asarray(output, dtype=np.float32)
 
+    def traversability_masking(self, cloud):
+        
+        # row index 1 is the "class" row of the cloud matrix
+        #mask = matrix[1,:] == 0: # '0' means traversable - check TRAVERSABILITY_LABELS
+        #filtered_cloud = cloud[: ~mask]
+        mask = cloud[:, 3] >= 1.0
+        filtered_cloud = cloud[mask]
+        return filtered_cloud
+        
+
     def segment_cloud_cb(self, pc_msg):
         assert isinstance(pc_msg, PointCloud2)
         self.lidar_frame = pc_msg.header.frame_id
@@ -261,6 +272,8 @@ class CloudSegmentor:
             t3 = rospy.Time.now().to_sec()
             rospy.logdebug('Postprocessing took: %.3f [sec]' % (t3 - t2))
 
+            filtered_output = self.traversability_masking(output)
+
             # grass_mask = output[:, 6] == 1
             # bushes_mask = output[:, 6] == 9
             # mean_height = min(np.mean(output[grass_mask, 2]), np.mean(output[bushes_mask, 2]))
@@ -270,7 +283,11 @@ class CloudSegmentor:
             # publish segmented point cloud
             segm_pc_msg = msgify_cloud(output, frame=pc_msg.header.frame_id, stamp=pc_msg.header.stamp,
                                        names=self.output_pc_fields)
+            segm_pc_msg_filtered = msgify_cloud(filtered_output, frame=pc_msg.header.frame_id, stamp=pc_msg.header.stamp,
+                                       names=self.output_pc_fields)
+
             self.segm_cloud_pub.publish(segm_pc_msg)
+            self.segm_cloud_pub_filtered.publish(segm_pc_msg_filtered)
 
             if self.debug:
                 # publish depth image

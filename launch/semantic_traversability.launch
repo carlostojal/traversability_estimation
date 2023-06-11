@@ -30,7 +30,7 @@
                 width: $(arg width)
                 keep: 0  <!-- keep first -->
                 azimuth_only: false
-                frame: odom
+                frame: ouster_link
             </rosparam>
             <param name="fov_elevation" value="$(eval arg('fov_elevation') / 180. * 3.1415)"/>
 
