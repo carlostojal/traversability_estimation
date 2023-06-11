@@ -227,8 +227,10 @@ class CloudSegmentor:
     def traversability_masking(self, cloud):
         
         # row index 1 is the "class" row of the cloud matrix
-        mask = matrix[1,:] == 0: # '0' means traversable - check TRAVERSABILITY_LABELS
-        filtered_cloud = cloud[: ~mask]
+        #mask = matrix[1,:] == 0: # '0' means traversable - check TRAVERSABILITY_LABELS
+        #filtered_cloud = cloud[: ~mask]
+        mask = cloud[:, 3] >= 1.0
+        filtered_cloud = cloud[mask]
         return filtered_cloud
         
 
