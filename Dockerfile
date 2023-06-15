@@ -2,8 +2,6 @@ FROM carlostojal/cuda-ros:noetic-cuda12.1.1-ubuntu20.04
 
 # environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-ENV PATH=/usr/local/cuda/bin:$PATH
 
 # install dependencies
 RUN apt update
@@ -83,13 +81,15 @@ RUN git clone https://github.com/ctu-vras/cloud_proc.git
 WORKDIR /catkin_ws
 
 # install dependencies
-RUN rosdep install --from-paths /catkin_ws --ignore-src --rosdistro noetic -y
+RUN apt update
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && \
+    rosdep install --from-paths /catkin_ws --ignore-src --rosdistro noetic -y"
 # build
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && \
     cd /catkin_ws && \
     catkin build"
 
-# launch the aggregator
+# launch on start
 CMD /bin/bash -c "source /opt/ros/noetic/setup.bash && \
     source /catkin_ws/devel/setup.bash && \
     roslaunch traversability_estimation semantic_traversability.launch"
