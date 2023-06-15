@@ -2,8 +2,6 @@ FROM carlostojal/cuda-ros:noetic-cuda12.1.1-ubuntu20.04
 
 # environment variables
 ENV DEBIAN_FRONTEND=noninteractive
-ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
-ENV PATH=/usr/local/cuda/bin:$PATH
 
 # install dependencies
 RUN apt update
