@@ -16,6 +16,11 @@ Example of the module being used in navigation pipeline:
 
 Please, follow the instructions in [./docs/install.md](./docs/install.md).
 
+#### Docker
+To build the package with Docker, you obviously need Docker installed on your system and NVIDIA Container Toolkit set up ([instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html#install-guide)). Then issue these commands:
+- Run the command `docker build -t traversability_estimation .`. It will install all the dependencies, get the neural network weights and build everything, so it will take a while.
+- Run the command `docker run --rm --runtime=nvidia --gpus all --network=host -it traversability_estimation`.
+
 ### [Images Semantic Segmentation Node](https://docs.google.com/document/d/1ZKGbDJ3xky1IdwFRN3pk5FYKq3wiQ5QcbyBPlOGammw/edit?usp=sharing)
 
 The node takes as input RGB images and intrinsics (from several cameras as well is supported).
