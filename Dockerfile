@@ -81,13 +81,15 @@ RUN git clone https://github.com/ctu-vras/cloud_proc.git
 WORKDIR /catkin_ws
 
 # install dependencies
-RUN rosdep install --from-paths /catkin_ws --ignore-src --rosdistro noetic -y
+RUN apt update
+RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && \
+    rosdep install --from-paths /catkin_ws --ignore-src --rosdistro noetic -y"
 # build
 RUN /bin/bash -c "source /opt/ros/noetic/setup.bash && \
     cd /catkin_ws && \
     catkin build"
 
-# launch the aggregator
+# launch on start
 CMD /bin/bash -c "source /opt/ros/noetic/setup.bash && \
     source /catkin_ws/devel/setup.bash && \
     roslaunch traversability_estimation semantic_traversability.launch"
