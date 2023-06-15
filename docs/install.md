@@ -11,7 +11,7 @@ git clone https://github.com/ctu-vras/traversability_estimation
 git clone https://github.com/ctu-vras/cloud_proc
 cd ~/catkin_ws/
 rosdep install --from-paths /catkin_ws --ignore-src --rosdistro noetic -y
-catkin build traversability_estimation
+catkin build
 ```
 
 In case you would like to run geometric cloud segmentation, traversability fusion or image segementation to point cloud projection nodes,
